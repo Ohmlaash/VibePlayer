@@ -1,0 +1,819 @@
+<!-- This is the standalone, single-file edition of VibePlayer for GitHub Pages. -->
+<!-- Rename this file to 'index.html' and upload it to your GitHub repository root! -->
+<!-- It contains all HTML, CSS, JavaScript, and SVG icons in a single self-contained file. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VibePlayer - Standalone Spotify-Lite for AI Music</title>
+  <meta name="description" content="A 100% serverless, single-file music player streaming AI-generated music from Catbox.moe with live sync from Rentry.co manifests." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              canvas: '#0b0b0f',
+              surface: '#13121d',
+              card: '#181726',
+              border: '#2a2444',
+              accent: '#a855f7',
+              accentHover: '#c084fc',
+              purpleDeep: '#7c3aed',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      background-color: #0b0b0f;
+      color: #f3f4f6;
+      margin: 0;
+      overflow-x: hidden;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(11, 11, 15, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(147, 51, 234, 0.25);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(168, 85, 247, 0.45);
+    }
+    input[type="range"] {
+      accent-color: #a855f7;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      height: 12px;
+      width: 12px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    input[type="range"]:hover::-webkit-slider-thumb {
+      transform: scale(1.25);
+    }
+  </style>
+</head>
+<body class="bg-[#0b0b0f] text-slate-100 h-screen w-screen overflow-hidden flex flex-col">
+
+  <!-- Audio Element -->
+  <audio id="audioEngine" preload="metadata"></audio>
+
+  <!-- Main App Shell -->
+  <div class="flex-1 flex overflow-hidden">
+    <!-- Left Sidebar -->
+    <aside class="w-64 md:w-72 bg-[#0d0c13] border-r border-purple-900/20 flex flex-col h-full select-none shrink-0">
+      <div class="p-6 pb-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/40 flex items-center justify-center text-purple-400 shadow-md shadow-purple-950/50">
+            <svg class="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+          </div>
+          <div>
+            <h1 class="text-base font-bold tracking-tight text-white leading-tight">VibePlayer</h1>
+            <p class="text-[11px] text-purple-300/70 font-medium tracking-wide">Single-File Edition</p>
+          </div>
+        </div>
+      </div>
+
+      <nav class="px-3 py-2 space-y-1">
+        <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-purple-600/15 text-purple-300 font-semibold text-xs tracking-wide">
+          <svg class="w-4 h-4 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 6 4 14M12 6v14M8 8v12M4 4v16"/></svg>
+          <span>My Music Library</span>
+        </div>
+
+        <button onclick="openModal('onboardingModal')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 text-xs font-medium transition-colors">
+          <div class="flex items-center gap-3">
+            <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9m9 10H5m4-5h11"/><circle cx="7" cy="7" r="3"/><circle cx="17" cy="17" r="3"/></svg>
+            <span>Switch Source / URL</span>
+          </div>
+        </button>
+
+        <button onclick="openModal('shortcutsModal')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 text-xs font-medium transition-colors">
+          <div class="flex items-center gap-3">
+            <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg>
+            <span>Keyboard Shortcuts</span>
+          </div>
+          <span class="text-[10px] text-slate-500 font-mono bg-white/5 px-1.5 py-0.5 rounded">?</span>
+        </button>
+      </nav>
+
+      <!-- Connected Source Card -->
+      <div class="px-4 py-3 mx-3 my-2 rounded-xl bg-[#13121d] border border-purple-900/30">
+        <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+          <span class="font-semibold text-purple-300/80 uppercase text-[10px] tracking-wider">Connected Source</span>
+          <span id="liveStatusBadge" class="flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
+            <svg class="w-3 h-3 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Live
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2 mb-3">
+          <svg class="w-4 h-4 text-purple-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <div class="min-w-0 flex-1">
+            <p id="sidebarSourceText" class="text-xs text-slate-200 font-medium truncate">No source connected</p>
+            <p id="sidebarLastSyncText" class="text-[10px] text-slate-500">Not synced yet</p>
+          </div>
+        </div>
+
+        <button id="syncButton" onclick="triggerSync()" class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 hover:text-white border border-purple-500/30 text-xs font-semibold transition-all">
+          <svg id="syncIcon" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+          <span id="syncButtonText">Sync Manifest Now</span>
+        </button>
+      </div>
+
+      <!-- Playlist Stats -->
+      <div class="mt-auto px-5 py-4 border-t border-purple-900/20 text-xs text-slate-400 space-y-1">
+        <p id="sidebarPlaylistName" class="text-white font-medium truncate">YuE AI Music</p>
+        <div class="flex items-center gap-1.5 text-[11px] text-slate-500 font-mono tabular-nums">
+          <span id="sidebarTrackCount">0 tracks</span>
+          <span aria-hidden="true">·</span>
+          <span id="sidebarTotalDuration">0:00</span>
+        </div>
+        <p class="text-[10px] text-purple-400/80 pt-1">Zero servers · Direct streaming</p>
+      </div>
+    </aside>
+
+    <!-- Main View Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#0e0d15]">
+      <!-- Header Hero -->
+      <div class="relative p-6 sm:p-8 bg-gradient-to-b from-purple-950/40 via-[#13121d] to-[#0b0b0e] border-b border-purple-900/20">
+        <div class="flex flex-col sm:flex-row items-center sm:items-end gap-6 max-w-6xl mx-auto">
+          <div id="heroCoverContainer" class="w-36 h-36 sm:w-48 sm:h-48 rounded-2xl shadow-2xl shadow-purple-950/60 border border-purple-800/30 overflow-hidden shrink-0 flex items-center justify-center bg-gradient-to-br from-purple-950 to-slate-900">
+            <svg class="w-16 h-16 text-purple-400/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M12 2a10 10 0 0 0-4 18.7M12 22a10 10 0 0 0 4-18.7"/></svg>
+          </div>
+
+          <div class="flex-1 text-center sm:text-left min-w-0">
+            <span class="text-[11px] font-bold tracking-widest uppercase text-purple-400">Curated AI Music Vault</span>
+            <h1 id="heroTitle" class="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mt-1 mb-2 truncate">YuE AI Streamer</h1>
+            <p id="heroDescription" class="text-xs sm:text-sm text-slate-300 max-w-2xl line-clamp-2 mb-3">Host your tracks on Catbox and edit your JSON manifest on Rentry.</p>
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-slate-400 font-medium">
+              <span class="text-purple-300">Catbox Direct Links</span>
+              <span aria-hidden="true">·</span>
+              <span id="heroTracksCount" class="font-mono tabular-nums">0 tracks</span>
+              <span aria-hidden="true">·</span>
+              <span id="heroTotalDuration" class="font-mono tabular-nums">0:00 total</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action & Search Bar -->
+      <div class="sticky top-0 z-20 px-6 sm:px-8 py-4 bg-[#0b0b0e]/90 backdrop-blur-md border-b border-purple-900/20">
+        <div class="flex items-center justify-between gap-4 max-w-6xl mx-auto">
+          <div class="flex items-center gap-3">
+            <button id="heroPlayButton" onclick="togglePlayPause()" class="w-12 h-12 rounded-full bg-purple-600 hover:bg-purple-500 text-white flex items-center justify-center shadow-lg shadow-purple-950/60 hover:scale-105 active:scale-95 transition-all">
+              <svg id="heroPlayIcon" class="w-5 h-5 fill-white translate-x-0.5" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            </button>
+            <button onclick="shuffleAndPlay()" class="p-3 rounded-full text-slate-400 hover:text-purple-300 hover:bg-white/5 transition-colors" title="Shuffle Play">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 3 .9 3.7 2.2l.4.8"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/></svg>
+            </button>
+          </div>
+
+          <div class="relative w-48 sm:w-64">
+            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="searchInput" oninput="handleSearch(this.value)" type="text" placeholder="Filter title, artist..." class="w-full bg-[#13121d] border border-purple-900/30 rounded-full pl-9 pr-8 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Tracks Table Scrollable Container -->
+      <div class="flex-1 overflow-y-auto px-4 sm:px-8 pt-4 pb-32 max-w-6xl mx-auto w-full">
+        <table class="w-full border-collapse text-left text-xs sm:text-sm">
+          <thead>
+            <tr class="border-b border-purple-900/20 text-slate-400 text-xs font-semibold tracking-wider uppercase">
+              <th class="py-2.5 px-3 w-12 text-center">#</th>
+              <th class="py-2.5 px-3">Title</th>
+              <th class="py-2.5 px-3 hidden md:table-cell">Album</th>
+              <th class="py-2.5 px-3 w-20 text-right">Duration</th>
+              <th class="py-2.5 px-3 w-12 text-center">Copy</th>
+            </tr>
+          </thead>
+          <tbody id="trackTableBody" class="divide-y divide-purple-900/10">
+            <!-- Injected dynamically -->
+          </tbody>
+        </table>
+        <div id="noTracksMessage" class="hidden py-16 text-center text-slate-400">
+          <p class="text-sm font-semibold text-slate-200">No tracks matched your search.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Bottom Player Bar -->
+  <footer class="fixed bottom-0 left-0 right-0 h-24 bg-[#0e0d16]/95 backdrop-blur-xl border-t border-purple-900/30 px-4 sm:px-6 flex items-center justify-between z-40 select-none shadow-2xl">
+    <!-- Left: Now Playing Info -->
+    <div class="flex items-center gap-3 w-1/4 min-w-[180px] max-w-[280px]">
+      <div id="playerThumb" onclick="openModal('fullscreenModal')" class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-purple-950/60 border border-purple-900/40 overflow-hidden shrink-0 cursor-pointer flex items-center justify-center">
+        <svg class="w-6 h-6 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p id="playerTrackTitle" class="font-semibold text-xs sm:text-sm text-white truncate cursor-pointer hover:underline" onclick="openModal('fullscreenModal')">No track playing</p>
+        <p id="playerTrackArtist" class="text-[11px] sm:text-xs text-slate-400 truncate">VibePlayer</p>
+      </div>
+    </div>
+
+    <!-- Center: Playback Controls & Scrubber -->
+    <div class="flex flex-col items-center justify-center max-w-xl w-2/4 px-2">
+      <div class="flex items-center gap-3 sm:gap-5 mb-1.5">
+        <button id="shuffleBtn" onclick="toggleShuffle()" class="p-1.5 text-slate-400 hover:text-white transition-colors" title="Shuffle">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 3 .9 3.7 2.2l.4.8"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/></svg>
+        </button>
+        <button onclick="playPrev()" class="p-1.5 text-slate-300 hover:text-white transition-colors" title="Previous">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" x2="5" y1="19" y2="5" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+        <button id="playerPlayBtn" onclick="togglePlayPause()" class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-purple-600 hover:bg-purple-500 text-white flex items-center justify-center shadow-lg shadow-purple-900/60 hover:scale-105 active:scale-95 transition-all" title="Play/Pause">
+          <svg id="playerPlayIcon" class="w-5 h-5 fill-current translate-x-0.5" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+        </button>
+        <button onclick="playNext()" class="p-1.5 text-slate-300 hover:text-white transition-colors" title="Next">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+        <button id="repeatBtn" onclick="cycleRepeat()" class="p-1.5 text-slate-400 hover:text-white transition-colors" title="Repeat">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+        </button>
+      </div>
+
+      <!-- Scrubber -->
+      <div class="w-full flex items-center gap-2.5 text-[11px] font-mono tabular-nums text-slate-400">
+        <span id="currentTimeText" class="w-9 text-right">0:00</span>
+        <input id="scrubberInput" type="range" min="0" max="100" value="0" step="0.5" oninput="handleSeek(this.value)" class="w-full h-1.5 bg-slate-800 rounded-full appearance-none cursor-pointer focus:outline-none" />
+        <span id="durationTimeText" class="w-9 text-left">0:00</span>
+      </div>
+    </div>
+
+    <!-- Right: Volume & Fullscreen -->
+    <div class="flex items-center justify-end gap-3 w-1/4 min-w-[150px]">
+      <button onclick="toggleMute()" class="p-1 text-slate-400 hover:text-white transition-colors" title="Mute/Unmute">
+        <svg id="volumeIcon" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+      </button>
+      <div class="w-20 sm:w-28 flex items-center">
+        <input id="volumeInput" type="range" min="0" max="1" step="0.01" value="0.85" oninput="handleVolume(this.value)" class="w-full h-1.5 bg-slate-800 rounded-full appearance-none cursor-pointer focus:outline-none" />
+      </div>
+      <button onclick="openModal('fullscreenModal')" class="p-1.5 text-slate-400 hover:text-purple-300 transition-colors hidden sm:block" title="Fullscreen view">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" x2="14" y1="3" y2="10"/><line x1="3" x2="10" y1="21" y2="14"/></svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Onboarding / Connection Modal -->
+  <div id="onboardingModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+    <div class="relative w-full max-w-2xl bg-[#121217] border border-purple-900/30 rounded-2xl shadow-2xl p-6 sm:p-8 text-slate-100 my-8">
+      <button onclick="closeModal('onboardingModal')" class="absolute top-5 right-5 text-slate-400 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+        </div>
+        <div>
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white">Connect Your Music Vault</h2>
+          <p class="text-xs sm:text-sm text-slate-400">Stream free AI-generated tracks directly from Catbox & Rentry</p>
+        </div>
+      </div>
+
+      <div class="mt-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-purple-300/80 mb-2">Playlist Raw URL (Rentry or Gist)</label>
+          <input id="urlInputModal" type="text" placeholder="https://rentry.co/myplaylist or raw URL" class="w-full bg-[#0b0b0e] border border-purple-900/40 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 font-mono" />
+          <p class="text-xs text-slate-400 mt-1.5">You can enter a regular Rentry link or /raw link. It updates automatically when edited!</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 pt-2">
+          <button onclick="fetchUrlFromModal()" class="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-sm transition-all shadow-lg">
+            Connect & Stream
+          </button>
+          <button onclick="loadDemoVault()" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium transition-colors border border-slate-700/50">
+            Try Demo Tracks
+          </button>
+        </div>
+
+        <div class="pt-4 border-t border-purple-900/20 text-xs text-slate-400 flex items-center justify-between">
+          <span>Need starter JSON template?</span>
+          <button onclick="copySchemaToClipboard()" class="px-3 py-1.5 rounded-lg bg-purple-600/20 text-purple-300 hover:bg-purple-600/30 transition-colors font-medium">
+            Copy JSON Schema
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fullscreen Visualizer Modal -->
+  <div id="fullscreenModal" class="hidden fixed inset-0 z-50 bg-[#09080e]/95 backdrop-blur-2xl flex flex-col justify-between p-6 sm:p-12 text-white">
+    <div class="flex items-center justify-between">
+      <div class="text-xs font-semibold uppercase tracking-wider text-purple-400">Now Playing · YuE AI Vault</div>
+      <button onclick="closeModal('fullscreenModal')" class="p-2.5 rounded-full bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="flex flex-col items-center justify-center my-auto max-w-lg mx-auto w-full text-center">
+      <div id="fullscreenCover" class="w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-3xl shadow-2xl shadow-purple-950/80 border border-purple-800/40 mb-8 overflow-hidden flex items-center justify-center bg-gradient-to-br from-purple-950 to-slate-900">
+        <svg class="w-24 h-24 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+      </div>
+      <h2 id="fsTitle" class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2 truncate max-w-full">No track playing</h2>
+      <p id="fsArtist" class="text-sm sm:text-base text-purple-300/80 font-medium mb-1 truncate max-w-full">VibePlayer</p>
+      <p id="fsAlbum" class="text-xs text-slate-500 mb-6 truncate max-w-full">Single</p>
+
+      <div class="w-full space-y-1.5">
+        <input id="fsScrubber" type="range" min="0" max="100" value="0" step="0.5" oninput="handleSeek(this.value)" class="w-full h-2 bg-slate-800 rounded-full appearance-none cursor-pointer focus:outline-none" />
+        <div class="flex justify-between text-xs font-mono tabular-nums text-slate-400">
+          <span id="fsCurrentTime">0:00</span>
+          <span id="fsDuration">0:00</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center gap-6 sm:gap-8 mt-6">
+        <button onclick="playPrev()" class="p-3 text-slate-200 hover:text-white transition-colors">
+          <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" x2="5" y1="19" y2="5" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+        <button id="fsPlayBtn" onclick="togglePlayPause()" class="w-16 h-16 rounded-full bg-purple-600 hover:bg-purple-500 text-white flex items-center justify-center shadow-xl shadow-purple-900/60 hover:scale-105 active:scale-95 transition-all">
+          <svg id="fsPlayIcon" class="w-7 h-7 fill-current translate-x-0.5" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+        </button>
+        <button onclick="playNext()" class="p-3 text-slate-200 hover:text-white transition-colors">
+          <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="text-center text-xs text-slate-500">
+      Press <kbd class="font-mono bg-white/5 px-1.5 py-0.5 rounded text-slate-300">Space</kbd> to toggle play/pause · <kbd class="font-mono bg-white/5 px-1.5 py-0.5 rounded text-slate-300">Esc</kbd> to close
+    </div>
+  </div>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div id="shortcutsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="relative w-full max-w-md bg-[#13121d] border border-purple-900/40 rounded-2xl p-6 text-slate-100 shadow-2xl">
+      <button onclick="closeModal('shortcutsModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <h3 class="text-lg font-bold text-white mb-4">Keyboard Shortcuts</h3>
+      <div class="space-y-2 text-xs">
+        <div class="flex justify-between py-1.5 border-b border-purple-900/20"><span>Play / Pause</span><kbd class="font-mono bg-[#0b0b0e] border border-purple-800/40 px-2 py-0.5 rounded text-purple-300">Space</kbd></div>
+        <div class="flex justify-between py-1.5 border-b border-purple-900/20"><span>Seek ±5 seconds</span><kbd class="font-mono bg-[#0b0b0e] border border-purple-800/40 px-2 py-0.5 rounded text-purple-300">← / →</kbd></div>
+        <div class="flex justify-between py-1.5 border-b border-purple-900/20"><span>Volume ±5%</span><kbd class="font-mono bg-[#0b0b0e] border border-purple-800/40 px-2 py-0.5 rounded text-purple-300">↑ / ↓</kbd></div>
+        <div class="flex justify-between py-1.5 border-b border-purple-900/20"><span>Mute / Unmute</span><kbd class="font-mono bg-[#0b0b0e] border border-purple-800/40 px-2 py-0.5 rounded text-purple-300">M</kbd></div>
+        <div class="flex justify-between py-1.5 border-b border-purple-900/20"><span>Sync Rentry Manifest</span><kbd class="font-mono bg-[#0b0b0e] border border-purple-800/40 px-2 py-0.5 rounded text-purple-300">S</kbd></div>
+        <div class="flex justify-between py-1.5 border-b border-purple-900/20"><span>Fullscreen Now-Playing</span><kbd class="font-mono bg-[#0b0b0e] border border-purple-800/40 px-2 py-0.5 rounded text-purple-300">F</kbd></div>
+        <div class="flex justify-between py-1.5 border-b border-purple-900/20"><span>Keyboard Guide</span><kbd class="font-mono bg-[#0b0b0e] border border-purple-800/40 px-2 py-0.5 rounded text-purple-300">?</kbd></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="hidden fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-2xl text-xs sm:text-sm font-medium border bg-[#151322] border-purple-500/50 text-purple-200">
+    <span id="toastText"></span>
+  </div>
+
+  <!-- Application Logic -->
+  <script>
+    // State
+    let playlist = null;
+    let sourceUrl = localStorage.getItem('vibe_playlist_url') || '';
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+    let isMuted = false;
+    let volume = parseFloat(localStorage.getItem('vibe_volume') || '0.85');
+    let isShuffle = localStorage.getItem('vibe_shuffle') === 'true';
+    let repeatMode = localStorage.getItem('vibe_repeat') || 'off'; // 'off' | 'all' | 'one'
+    let searchQuery = '';
+
+    const audio = document.getElementById('audioEngine');
+
+    // Demo Data
+    const DEMO = {
+      playlistName: "YuE 2 AI Generation Vault (Demo)",
+      description: "Curated ambient, synthwave and generative electronic pieces rendered via YuE & open audio models.",
+      cover: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80",
+      tracks: [
+        {
+          id: "yue-demo-01",
+          title: "Synthetic Horizons",
+          artist: "YuE 2 Engine",
+          album: "Neural Dreams Vol. 1",
+          src: "https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__Koan.mp3",
+          cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&auto=format&fit=crop&q=80",
+          duration: 184
+        },
+        {
+          id: "yue-demo-02",
+          title: "Neon Pulse Drift",
+          artist: "YuE 2 Engine",
+          album: "Neural Dreams Vol. 1",
+          src: "https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3",
+          cover: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=500&auto=format&fit=crop&q=80",
+          duration: 215
+        },
+        {
+          id: "yue-demo-03",
+          title: "Midnight Latent Space",
+          artist: "YuE 2 Engine",
+          album: "Cybernetic Frequencies",
+          src: "https://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg",
+          cover: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=500&auto=format&fit=crop&q=80",
+          duration: 247
+        }
+      ]
+    };
+
+    const SAMPLE_JSON = `{
+  "playlistName": "My YuE AI Music Vault",
+  "description": "Hosted with Catbox.moe & Rentry.co",
+  "cover": "https://files.catbox.moe/your-playlist-art.png",
+  "tracks": [
+    {
+      "id": "1",
+      "title": "Neon Memories",
+      "artist": "YuE 2",
+      "album": "Synthetic Horizons",
+      "src": "https://files.catbox.moe/your_song_1.mp3",
+      "cover": "https://files.catbox.moe/art1.png",
+      "duration": 214
+    }
+  ]
+}`;
+
+    // Formatting
+    function formatTime(secs) {
+      if (isNaN(secs) || secs < 0) return '0:00';
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastText').innerText = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 3000);
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    // Audio Setup
+    audio.volume = volume;
+
+    audio.addEventListener('timeupdate', () => {
+      const cur = audio.currentTime;
+      const dur = audio.duration || 0;
+      document.getElementById('currentTimeText').innerText = formatTime(cur);
+      document.getElementById('fsCurrentTime').innerText = formatTime(cur);
+
+      if (dur > 0) {
+        document.getElementById('scrubberInput').value = (cur / dur) * 100;
+        document.getElementById('fsScrubber').value = (cur / dur) * 100;
+      }
+    });
+
+    audio.addEventListener('loadedmetadata', () => {
+      const dur = audio.duration || 0;
+      document.getElementById('durationTimeText').innerText = formatTime(dur);
+      document.getElementById('fsDuration').innerText = formatTime(dur);
+    });
+
+    audio.addEventListener('ended', () => {
+      if (repeatMode === 'one') {
+        audio.currentTime = 0;
+        audio.play();
+      } else {
+        playNext();
+      }
+    });
+
+    // Playback Handlers
+    function playTrack(idx) {
+      if (!playlist || !playlist.tracks[idx]) return;
+      currentTrackIndex = idx;
+      const track = playlist.tracks[idx];
+      audio.src = track.src;
+      audio.load();
+      audio.play().catch(e => console.warn(e));
+      isPlaying = true;
+      updateUI();
+      updateMediaSession(track);
+    }
+
+    function togglePlayPause() {
+      if (!playlist || playlist.tracks.length === 0) return;
+      if (!audio.src) {
+        playTrack(0);
+        return;
+      }
+      if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+      } else {
+        audio.play().catch(e => console.warn(e));
+        isPlaying = true;
+      }
+      updateUI();
+    }
+
+    function playNext() {
+      if (!playlist || playlist.tracks.length === 0) return;
+      if (isShuffle) {
+        const nextIdx = Math.floor(Math.random() * playlist.tracks.length);
+        playTrack(nextIdx);
+        return;
+      }
+      if (currentTrackIndex < playlist.tracks.length - 1) {
+        playTrack(currentTrackIndex + 1);
+      } else if (repeatMode === 'all') {
+        playTrack(0);
+      } else {
+        isPlaying = false;
+        updateUI();
+      }
+    }
+
+    function playPrev() {
+      if (!playlist || playlist.tracks.length === 0) return;
+      if (audio.currentTime > 3) {
+        audio.currentTime = 0;
+        return;
+      }
+      const prevIdx = currentTrackIndex > 0 ? currentTrackIndex - 1 : playlist.tracks.length - 1;
+      playTrack(prevIdx);
+    }
+
+    function handleSeek(percent) {
+      if (audio.duration) {
+        audio.currentTime = (percent / 100) * audio.duration;
+      }
+    }
+
+    function handleVolume(val) {
+      volume = parseFloat(val);
+      audio.volume = volume;
+      localStorage.setItem('vibe_volume', volume);
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      audio.volume = isMuted ? 0 : volume;
+    }
+
+    function toggleShuffle() {
+      isShuffle = !isShuffle;
+      localStorage.setItem('vibe_shuffle', isShuffle);
+      document.getElementById('shuffleBtn').className = isShuffle
+        ? 'p-1.5 text-purple-400 transition-colors'
+        : 'p-1.5 text-slate-400 hover:text-white transition-colors';
+    }
+
+    function cycleRepeat() {
+      const modes = ['off', 'all', 'one'];
+      repeatMode = modes[(modes.indexOf(repeatMode) + 1) % modes.length];
+      localStorage.setItem('vibe_repeat', repeatMode);
+      document.getElementById('repeatBtn').className = repeatMode !== 'off'
+        ? 'p-1.5 text-purple-400 transition-colors'
+        : 'p-1.5 text-slate-400 hover:text-white transition-colors';
+    }
+
+    function shuffleAndPlay() {
+      if (!playlist || playlist.tracks.length === 0) return;
+      isShuffle = true;
+      localStorage.setItem('vibe_shuffle', 'true');
+      const randIdx = Math.floor(Math.random() * playlist.tracks.length);
+      playTrack(randIdx);
+    }
+
+    // MediaSession
+    function updateMediaSession(track) {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: track.title,
+          artist: track.artist,
+          album: track.album || playlist.playlistName,
+          artwork: track.cover ? [{ src: track.cover, sizes: '512x512', type: 'image/jpeg' }] : []
+        });
+        navigator.mediaSession.setActionHandler('play', () => togglePlayPause());
+        navigator.mediaSession.setActionHandler('pause', () => togglePlayPause());
+        navigator.mediaSession.setActionHandler('previoustrack', () => playPrev());
+        navigator.mediaSession.setActionHandler('nexttrack', () => playNext());
+      }
+    }
+
+    // URL Sync & Cache-busting
+    function normalizeRentryUrl(u) {
+      let url = u.trim();
+      if (!url.startsWith('http')) url = 'https://' + url;
+      if (url.includes('rentry.co') || url.includes('rentry.org')) {
+        const parts = new URL(url).pathname.split('/').filter(Boolean);
+        if (parts.length > 0) return `https://rentry.co/${parts[0]}/raw`;
+      }
+      return url;
+    }
+
+    async function triggerSync() {
+      if (!sourceUrl) {
+        showToast('Please connect a URL first.');
+        return;
+      }
+      const icon = document.getElementById('syncIcon');
+      icon.classList.add('animate-spin');
+      const bustUrl = normalizeRentryUrl(sourceUrl) + `?t=${Date.now()}`;
+
+      try {
+        const res = await fetch(bustUrl);
+        const text = await res.text();
+        let cleaned = text.trim();
+        if (cleaned.startsWith('```')) {
+          cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+        }
+        const parsed = JSON.parse(cleaned);
+        playlist = parsed;
+        localStorage.setItem('vibe_cached_manifest', JSON.stringify(playlist));
+        document.getElementById('sidebarLastSyncText').innerText = 'Just now';
+        updateUI();
+        showToast(`Synced ${playlist.tracks.length} tracks!`);
+      } catch (err) {
+        showToast('Sync error: ' + err.message);
+      } finally {
+        icon.classList.remove('animate-spin');
+      }
+    }
+
+    async function fetchUrlFromModal() {
+      const input = document.getElementById('urlInputModal').value;
+      if (!input) return;
+      sourceUrl = input;
+      localStorage.setItem('vibe_playlist_url', sourceUrl);
+      closeModal('onboardingModal');
+      await triggerSync();
+    }
+
+    function loadDemoVault() {
+      playlist = DEMO;
+      sourceUrl = '';
+      localStorage.removeItem('vibe_playlist_url');
+      localStorage.setItem('vibe_cached_manifest', JSON.stringify(playlist));
+      closeModal('onboardingModal');
+      updateUI();
+      showToast('Loaded demo tracks!');
+    }
+
+    function copySchemaToClipboard() {
+      navigator.clipboard.writeText(SAMPLE_JSON).then(() => showToast('Copied JSON schema!'));
+    }
+
+    function handleSearch(q) {
+      searchQuery = q.toLowerCase();
+      renderTracks();
+    }
+
+    // UI Updates
+    function updateUI() {
+      if (!playlist) return;
+
+      document.getElementById('sidebarPlaylistName').innerText = playlist.playlistName;
+      document.getElementById('sidebarTrackCount').innerText = `${playlist.tracks.length} tracks`;
+      document.getElementById('sidebarSourceText').innerText = sourceUrl ? sourceUrl.replace('https://', '') : 'Demo Vault';
+      document.getElementById('heroTitle').innerText = playlist.playlistName;
+      document.getElementById('heroTracksCount').innerText = `${playlist.tracks.length} tracks`;
+
+      // Active track info
+      const cur = playlist.tracks[currentTrackIndex];
+      if (cur) {
+        document.getElementById('playerTrackTitle').innerText = cur.title;
+        document.getElementById('playerTrackArtist').innerText = cur.artist;
+        document.getElementById('fsTitle').innerText = cur.title;
+        document.getElementById('fsArtist').innerText = cur.artist;
+        document.getElementById('fsAlbum').innerText = cur.album || 'Single';
+
+        if (cur.cover) {
+          document.getElementById('playerThumb').innerHTML = `<img src="${cur.cover}" class="w-full h-full object-cover" />`;
+          document.getElementById('fullscreenCover').innerHTML = `<img src="${cur.cover}" class="w-full h-full object-cover" />`;
+          document.getElementById('heroCoverContainer').innerHTML = `<img src="${cur.cover}" class="w-full h-full object-cover" />`;
+        }
+      }
+
+      // Play/Pause Icons
+      const playIcons = ['heroPlayIcon', 'playerPlayIcon', 'fsPlayIcon'];
+      playIcons.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.innerHTML = isPlaying
+            ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
+            : '<polygon points="6 3 20 12 6 21 6 3"/>';
+        }
+      });
+
+      renderTracks();
+    }
+
+    function renderTracks() {
+      if (!playlist) return;
+      const tbody = document.getElementById('trackTableBody');
+      tbody.innerHTML = '';
+
+      const filtered = playlist.tracks.filter(t => 
+        t.title.toLowerCase().includes(searchQuery) || 
+        t.artist.toLowerCase().includes(searchQuery) ||
+        (t.album && t.album.toLowerCase().includes(searchQuery))
+      );
+
+      document.getElementById('noTracksMessage').className = filtered.length === 0 ? 'py-16 text-center text-slate-400' : 'hidden';
+
+      filtered.forEach((track, idx) => {
+        const origIdx = playlist.tracks.indexOf(track);
+        const isCurrent = origIdx === currentTrackIndex;
+        const tr = document.createElement('tr');
+        tr.className = `group cursor-pointer transition-colors rounded-xl ${isCurrent ? 'bg-purple-600/15 text-purple-200' : 'hover:bg-purple-900/10 text-slate-300'}`;
+        tr.onclick = () => playTrack(origIdx);
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 text-center font-mono text-xs tabular-nums text-slate-500">${origIdx + 1}</td>
+          <td class="py-2.5 px-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-purple-950/60 overflow-hidden shrink-0 flex items-center justify-center">
+                ${track.cover ? `<img src="${track.cover}" class="w-full h-full object-cover" />` : '<span class="text-purple-400 text-xs">♪</span>'}
+              </div>
+              <div>
+                <p class="font-semibold text-xs sm:text-sm ${isCurrent ? 'text-purple-300' : 'text-white'} truncate">${track.title}</p>
+                <p class="text-xs text-slate-400 truncate">${track.artist}</p>
+              </div>
+            </div>
+          </td>
+          <td class="py-2.5 px-3 hidden md:table-cell text-xs text-slate-400 truncate">${track.album || 'Single'}</td>
+          <td class="py-2.5 px-3 text-right font-mono text-xs tabular-nums text-slate-400">${formatTime(track.duration || 0)}</td>
+          <td class="py-2.5 px-3 text-center" onclick="event.stopPropagation()">
+            <button onclick="navigator.clipboard.writeText('${track.src}'); showToast('Copied direct link!')" class="p-1 rounded text-slate-500 hover:text-purple-300">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.code === 'Space') { e.preventDefault(); togglePlayPause(); }
+      else if (e.code === 'ArrowLeft') { e.preventDefault(); audio.currentTime = Math.max(0, audio.currentTime - 5); }
+      else if (e.code === 'ArrowRight') { e.preventDefault(); audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); }
+      else if (e.code === 'ArrowUp') { e.preventDefault(); handleVolume(Math.min(1, volume + 0.05)); }
+      else if (e.code === 'ArrowDown') { e.preventDefault(); handleVolume(Math.max(0, volume - 0.05)); }
+      else if (e.key === 'm' || e.key === 'M') { toggleMute(); }
+      else if (e.key === 's' || e.key === 'S') { triggerSync(); }
+      else if (e.key === 'f' || e.key === 'F') {
+        const fs = document.getElementById('fullscreenModal');
+        fs.classList.contains('hidden') ? openModal('fullscreenModal') : closeModal('fullscreenModal');
+      }
+      else if (e.key === '?') { openModal('shortcutsModal'); }
+      else if (e.key === 'Escape') {
+        closeModal('fullscreenModal');
+        closeModal('shortcutsModal');
+        if (playlist) closeModal('onboardingModal');
+      }
+    });
+
+    // Init
+    try {
+      const cached = localStorage.getItem('vibe_cached_manifest');
+      if (cached) {
+        playlist = JSON.parse(cached);
+        closeModal('onboardingModal');
+        updateUI();
+      }
+    } catch (e) {}
+  </script>
+</body>
+</html>
